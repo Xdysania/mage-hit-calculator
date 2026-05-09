@@ -42,6 +42,20 @@
       .metric { border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
       .metric .k { font-size: 12px; color: var(--muted); }
       .metric .v { font-size: 21px; font-weight: 800; margin-top: 3px; }
+      .progress-track {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        background: #e2e8f0;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #22c55e, #3b82f6);
+        transition: width .2s ease;
+      }
       .note { color: var(--muted); font-size: 12px; line-height: 1.6; }
       @media (max-width: 980px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
     </style>
@@ -50,17 +64,28 @@
     <div class="wrap">
       <section class="card">
         <h1>法师 1 Hit 计算器</h1>
-        <div class="sub">
-          已按你要求做成“单一版本”：去掉成本；MW10/MW20固定规则；支持配装输入。<br />
-          重点：智力与魔攻都进入同一伤害公式，不是分离计算。
-        </div>
       </section>
 
       <section class="card">
         <div class="grid-2">
           <div class="field">
-            <label for="level">角色等级（全智力：10 + (等级-1)*5）</label>
+            <label for="level">角色等级（基础智力 + (等级-1)*5）</label>
             <input id="level" type="number" min="1" max="300" value="30" />
+          </div>
+          <div class="field">
+            <label for="baseStartInt">基础智力（默认10，可选4-13）</label>
+            <select id="baseStartInt">
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10" selected>10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+            </select>
           </div>
           <div class="field">
             <label for="mwMode">MW</label>
@@ -77,13 +102,14 @@
           </div>
           <div class="field">
             <label for="skillLevel">技能等级</label>
-            <input id="skillLevel" type="number" min="1" max="30" value="30" />
+            <select id="skillLevel">
+              <option value="1">1</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="30" selected>30</option>
+            </select>
           </div>
 
-          <div class="field">
-            <label for="wandBoostSel">属性杖</label>
-            <select id="wandBoostSel"></select>
-          </div>
           <div class="field">
             <label for="monsterSel">怪物</label>
             <select id="monsterSel"></select>
@@ -97,10 +123,6 @@
             <label for="extraMatt">额外魔攻（非法杖来源，加法）</label>
             <input id="extraMatt" type="number" min="0" step="1" value="0" />
           </div>
-          <div class="field">
-            <label>计算模式</label>
-            <input type="text" value="仅社区表（1hit 最小魔攻）" disabled />
-          </div>
         </div>
       </section>
 
@@ -111,23 +133,26 @@
 
       <section class="card">
         <div class="grid-3">
-          <div class="metric"><div class="k">总智力（含 MW）</div><div class="v" id="outTotalInt">-</div></div>
-          <div class="metric"><div class="k">总魔攻</div><div class="v" id="outTotalMatt">-</div></div>
-          <div class="metric"><div class="k">等效总魔攻（1智=1魔攻）</div><div class="v" id="outEqMatt">-</div></div>
+          <div class="metric"><div class="k">自身属性（含 MW）</div><div class="v" id="outTotalInt">-</div></div>
+          <div class="metric"><div class="k">装备属性（INT+魔攻）</div><div class="v" id="outTotalMatt">-</div></div>
+          <div class="metric"><div class="k">总魔攻（自身+装备）</div><div class="v" id="outEqMatt">-</div></div>
         </div>
         <div class="grid-3" style="margin-top:10px;">
           <div class="metric"><div class="k">总魔法攻击力（总智力+总魔攻）</div><div class="v" id="outMagicPower">-</div></div>
           <div class="metric"><div class="k">1 Hit 所需总魔法攻击力</div><div class="v" id="outRequiredMagicPower">-</div></div>
           <div class="metric"><div class="k">当前伤害</div><div class="v" id="outCurrentDamage">-</div></div>
         </div>
-        <div class="grid-3" style="margin-top:10px;">
-          <div class="metric"><div class="k">社区表 1hit 最小总魔攻</div><div class="v" id="outRequiredDamage">-</div></div>
-          <div class="metric"><div class="k">1 Hit 所需最小魔攻</div><div class="v" id="outRequiredMatt">-</div></div>
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="metric"><div class="k">1 Hit 所需装备属性</div><div class="v" id="outRequiredMatt">-</div></div>
           <div class="metric"><div class="k">状态</div><div class="v" id="outStatus">-</div></div>
         </div>
         <div class="grid-2" style="margin-top:10px;">
           <div class="metric"><div class="k">达标进度（总魔法攻击力）</div><div class="v" id="outProgress">-</div></div>
-          <div class="metric"><div class="k">总攻对比</div><div class="v" style="font-size:14px;font-weight:700;" id="outProgressDetail">-</div></div>
+          <div class="metric">
+            <div class="k">进度说明</div>
+            <div class="v" style="font-size:14px;font-weight:700;" id="outProgressDetail">-</div>
+            <div class="progress-track"><div class="progress-fill" id="outProgressBar"></div></div>
+          </div>
         </div>
         <div class="grid-2" style="margin-top:10px;">
           <div class="metric">
@@ -141,10 +166,15 @@
         </div>
       </section>
 
-      <section class="card note">
-        伤害公式（与你表一致）：<br />
-        ROUNDDOWN((((魔攻²/1000 + 魔攻*0.6*0.9)/30 + 总智力/200) * 技能系数 * 杖增伤 * 魔力激发), 0)
+      <section class="card">
+        <h2 style="margin:0 0 8px 0; font-size:18px;">支持作者维护</h2>
+        <div class="note" style="font-size:14px; color:#334155;">
+          如果这个计算器对你有帮助，欢迎支持作者持续维护和更新。<br />
+          你的支持可以帮助我继续优化功能、修正数据，并长期免费提供给群友使用。<br />
+          具体支持方式后续会在这里补充，感谢每一位使用和支持的朋友。
+        </div>
       </section>
+
     </div>
 
     <script>
@@ -159,12 +189,6 @@
         };
       }
 
-      const WAND_BOOST = {
-        "1/5(火)": { "天怒": 1, "暴風雪": 1, "火流星": 1.25 },
-        "2/6(毒)": { "天怒": 1, "暴風雪": 1, "火流星": 1.1 },
-        "3/7(冰)": { "天怒": 1, "暴風雪": 1.25, "火流星": 1 },
-        "4/8(雷)": { "天怒": 1, "暴風雪": 1.1, "火流星": 1 }
-      };
 
       // 怪物原始HP + 属性克制/抗性（按技能名）
       const MAP_MONSTERS = {
@@ -233,7 +257,7 @@
         "Dark Cornian": { "暴風雪": { 1: 1619, 10: 1394, 20: 1220, 30: 1152 }, "火流星": { 1: 1561, 10: 1354, 20: 1192, 30: 1127 }, "天怒": { 1: 1851, 10: 1659, 20: 1497, 30: 1430 } },
         "Mini Gold Martial Artist 4hit": { "暴風雪": { 1: 1632, 10: 1406, 20: 1231, 30: 1162 }, "火流星": { 1: 1574, 10: 1366, 20: 1202, 30: 1137 }, "天怒": { 1: 1866, 10: 1673, 20: 1510, 30: 1443 } },
         "Nightshadow": { "暴風雪": { 1: null, 10: null, 20: null, 30: null }, "火流星": { 1: 1601, 10: 1390, 20: 1224, 30: 1158 }, "天怒": { 1: 1898, 10: 1702, 20: 1536, 30: 1468 } },
-        "Petri 1hit": { "暴風雪": { 1: 1793, 10: 1547, 20: 1356, 30: 1285 }, "火流星": { 1: 1730, 10: 1503, 20: 1325, 30: 1255 }, "天怒": { 1: null, 10: 1838, 20: 1660, 30: 1587 } },
+        "Petri 1hit": { "暴風雪": { 1: 1793, 10: 1547, 20: 1356, 30: 1285 }, "火流星": { 1: 1730, 10: 1503, 20: 1325, 30: 1258 }, "天怒": { 1: null, 10: 1838, 20: 1660, 30: 1587 } },
         "Duku 1hit": { "暴風雪": { 1: 1919, 10: 1657, 20: 1454, 30: 1375 }, "火流星": { 1: 1852, 10: 1611, 20: 1421, 30: 1346 }, "天怒": { 1: null, 10: 1966, 20: 1778, 30: 1700 } },
         "Mini Gold Martial Artist 3hit": { "暴風雪": { 1: 1923, 10: 1661, 20: 1458, 30: 1378 }, "火流星": { 1: 1856, 10: 1614, 20: 1424, 30: 1349 }, "天怒": { 1: null, 10: 1970, 20: 1781, 30: 1703 } },
         "Road of Regrets 2": { "暴風雪": { 1: null, 10: null, 20: null, 30: 1909 }, "火流星": { 1: 1356, 10: 1174, 20: 1031, 30: 974 }, "天怒": { 1: null, 10: 1826, 20: 1650, 30: 1577 } },
@@ -250,18 +274,55 @@
       const MW_MAINSTAT_BONUS = { "0": 0, "10": 0.05, "20": 0.10 };
 
       const GEAR = [
-        { key: "hat", label: "头部 INT", intRec: [0, 25, 40], matt: false },
-        { key: "face", label: "面部 INT", intRec: [0, 8, 15], matt: false },
-        { key: "pendant", label: "项链 INT", intRec: [0, 20, 35], matt: false },
-        { key: "earring", label: "耳环 INT", intRec: [0, 20, 30], matt: false },
-        { key: "shield", label: "副手盾牌 INT", intRec: [0, 12, 25], matt: false },
-        { key: "glove", label: "手套 INT", intRec: [0, 18, 28], matt: false },
-        { key: "cape", label: "披风 INT", intRec: [0, 18, 30], matt: false },
-        { key: "shoe", label: "鞋子 INT", intRec: [0, 15, 25], matt: false },
-        { key: "overall", label: "套服 INT", intRec: [0, 20, 35], matt: false },
-        { key: "ring", label: "戒指 INT", intRec: [0, 16, 28], matt: false },
-        { key: "wand", label: "法杖 INT/魔攻", intRec: [0, 5, 10], mattRec: [120, 145, 165], matt: true }
+        { key: "hat", label: "头部 INT", intRec: [0, 25, 40], combined: false },
+        { key: "face", label: "面部 INT", intRec: [0, 8, 15], combined: false },
+        {
+          key: "pendant",
+          label: "项链 INT",
+          combined: false,
+          options: [
+            { label: "银星", value: 5 },
+            { label: "黑龙项链", value: 22 }
+          ]
+        },
+        { key: "earring", label: "耳环 INT+魔攻", intRec: [0, 20, 30], combined: true },
+        { key: "shield", label: "盾牌 INT+魔攻", intRec: [0, 12, 25], combined: true },
+        { key: "glove", label: "手套 INT+魔攻", intRec: [0, 18, 28], combined: true },
+        { key: "cape", label: "披风 INT+魔攻", intRec: [0, 18, 30], combined: true },
+        { key: "shoe", label: "鞋子 INT", intRec: [0, 15, 25], combined: false },
+        { key: "overall", label: "套服 INT", intRec: [0, 20, 35], combined: false },
+        { key: "ring", label: "戒指 INT", intRec: [0, 16, 28], combined: false },
+        { key: "wand", label: "法杖 INT+魔攻", intRec: [120, 150, 175], combined: true }
       ];
+
+      // 怪物中英文对照（下拉展示：英文 + 中文）
+      const MONSTER_CN_NAME = {
+        "Mini Gold Martial Artist": "小金人",
+        "Gallopera": "狂暴者",
+        "Vikerola": "维京熊",
+        "Petri": "石化战士",
+        "Duku": "杜库 / 树人",
+        "Skelosaurus": "骨龙",
+        "Harp": "哈维",
+        "Blood Harp": "血腥哈维",
+        "Risell Squid": "致命乌贼怪",
+        "Blue Wyvern": "蓝翼龙",
+        "Red Wyvern": "赤翼龙",
+        "Dark Wyvern": "暗黑翼龙",
+        "Dark Cornian": "暗黑双刀龙",
+        "Cold Shark": "尖鼻鲨鱼",
+        "Ulu 1": "捕蝇草",
+        "Ulu 2": "小泥怪",
+        "Ulu 3": "大泥怪",
+        "Memory Lane 1": "回忆的祭司",
+        "Memory Lane 5": "回忆的守护神",
+        "Road of Regrets 2": "悔恨的神官",
+        "Road of Regrets 5": "悔恨的守护神",
+        "Ninto": "忍头",
+        "Firebrand 2": "火焰龙",
+        "Stormbreaker": "破风者",
+        "Nightshadow": "暗影人"
+      };
 
       function splitMapAndHitMode(name) {
         const m = name.match(/^(.*?)(?:\s*)([1-4]hit)$/i);
@@ -291,33 +352,33 @@
 
       function fillBasics() {
         const skillSel = $("skill");
-        ["天怒", "暴風雪", "火流星"].forEach((s) => {
+        [
+          { value: "天怒", label: "天怒" },
+          { value: "暴風雪", label: "暴风雪（默认冰杖）" },
+          { value: "火流星", label: "火流星（默认火杖）" }
+        ].forEach((s) => {
           const opt = document.createElement("option");
-          opt.value = s;
-          opt.textContent = s;
+          opt.value = s.value;
+          opt.textContent = s.label;
           skillSel.appendChild(opt);
         });
         skillSel.value = "火流星";
 
-        const wandSel = $("wandBoostSel");
-        Object.keys(WAND_BOOST).forEach((w) => {
-          const opt = document.createElement("option");
-          opt.value = w;
-          opt.textContent = w;
-          wandSel.appendChild(opt);
-        });
-        wandSel.value = "1/5(火)";
-
         const monsterSel = $("monsterSel");
-        Object.keys(MONSTER_HIT_GROUPS).forEach((m) => {
-          const hasValidMode = Object.values(MONSTER_HIT_GROUPS[m]).some((mapKey) => hasAnyHitData(mapKey));
-          if (!hasValidMode) return;
+        const monsters = Object.keys(MONSTER_HIT_GROUPS)
+          .filter((m) => Object.values(MONSTER_HIT_GROUPS[m]).some((mapKey) => hasAnyHitData(mapKey)))
+          .sort((a, b) => {
+            const hpDiff = getMonsterSortHp(a) - getMonsterSortHp(b);
+            if (hpDiff !== 0) return hpDiff;
+            return a.localeCompare(b, "en");
+          });
+        monsters.forEach((m) => {
           const opt = document.createElement("option");
           opt.value = m;
-          opt.textContent = m;
+          opt.textContent = formatMonsterLabel(m);
           monsterSel.appendChild(opt);
         });
-        monsterSel.value = "Ulu 3";
+        monsterSel.value = "Petri";
         fillHitModes();
       }
 
@@ -345,6 +406,20 @@
         return MONSTER_HIT_GROUPS[monster]?.[hitMode] || monster;
       }
 
+      function getMonsterSortHp(monster) {
+        const modeMap = MONSTER_HIT_GROUPS[monster] || {};
+        const hpList = Object.values(modeMap)
+          .map((mapKey) => MAP_MONSTERS[mapKey]?.hp)
+          .filter((v) => Number.isFinite(v));
+        if (hpList.length === 0) return Number.MAX_SAFE_INTEGER;
+        return Math.min(...hpList);
+      }
+
+      function formatMonsterLabel(monster) {
+        const cn = MONSTER_CN_NAME[monster];
+        return cn ? `${monster}（${cn}）` : monster;
+      }
+
       function renderGear() {
         const root = $("gearGrid");
         root.innerHTML = "";
@@ -359,69 +434,58 @@
           custom.value = "__custom__";
           custom.textContent = "自定义";
           sel.appendChild(custom);
-          if (!slot.matt) {
-            slot.intRec.forEach((v) => {
+          if (slot.options) {
+            slot.options.forEach((item) => {
               const opt = document.createElement("option");
-              opt.value = String(v);
-              opt.textContent = `推荐 INT ${v}`;
+              opt.value = String(item.value);
+              opt.textContent = item.label;
               sel.appendChild(opt);
             });
           } else {
             for (let i = 0; i < slot.intRec.length; i++) {
               const opt = document.createElement("option");
-              opt.value = String(i);
-              opt.textContent = `推荐 INT ${slot.intRec[i]} / 魔攻 ${slot.mattRec[i]}`;
+              opt.value = String(slot.intRec[i]);
+              opt.textContent = slot.combined
+                ? `推荐 INT+魔攻 ${slot.intRec[i]}`
+                : `推荐 INT ${slot.intRec[i]}`;
               sel.appendChild(opt);
             }
           }
           box.appendChild(sel);
 
-          const intInput = document.createElement("input");
-          intInput.type = "number";
-          intInput.min = "0";
-          intInput.step = "1";
-          intInput.id = `gear_int_${slot.key}`;
-          intInput.value = "0";
-          intInput.style.marginTop = "8px";
-          box.appendChild(intInput);
-
-          if (slot.matt) {
-            const mattInput = document.createElement("input");
-            mattInput.type = "number";
-            mattInput.min = "0";
-            mattInput.step = "1";
-            mattInput.id = `gear_matt_${slot.key}`;
-            mattInput.value = "145";
-            mattInput.style.marginTop = "8px";
-            box.appendChild(mattInput);
-          }
+          const valInput = document.createElement("input");
+          valInput.type = "number";
+          valInput.min = "0";
+          valInput.step = "1";
+          valInput.id = `gear_val_${slot.key}`;
+          valInput.value = "0";
+          valInput.style.marginTop = "8px";
+          box.appendChild(valInput);
 
           sel.addEventListener("change", () => {
             if (sel.value === "__custom__") return;
-            if (!slot.matt) {
-              $(`gear_int_${slot.key}`).value = Number(sel.value);
-            } else {
-              const idx = Number(sel.value);
-              $(`gear_int_${slot.key}`).value = slot.intRec[idx];
-              $(`gear_matt_${slot.key}`).value = slot.mattRec[idx];
-            }
+            $(`gear_val_${slot.key}`).value = Number(sel.value);
           });
           root.appendChild(box);
         }
       }
 
-      function baseIntByLevel(level) {
-        return 10 + (level - 1) * 5;
+      function baseIntByLevel(level, baseStartInt) {
+        // 基础全智加点：起始智力可选；每级+5；三转(70)与四转(120)各额外+5
+        let base = baseStartInt + (level - 1) * 5;
+        if (level >= 70) base += 5;
+        if (level >= 120) base += 5;
+        return base;
       }
 
-      function calcDamage(matt, totalInt, skillCoef, wandBoost, meditation, mapName, skillName) {
+      function calcDamage(matt, totalInt, skillCoef, meditation, mapName, skillName) {
         let elementMult = 1.0;
         const m = MAP_MONSTERS[mapName];
         if (m) {
           if (m.weak.includes(skillName)) elementMult = 1.5;
           else if (m.resist.includes(skillName)) elementMult = 0.5;
         }
-        const raw = (((matt * matt / 1000 + matt * 0.6 * 0.9) / 30 + totalInt / 200) * skillCoef * wandBoost * meditation * elementMult);
+        const raw = (((matt * matt / 1000 + matt * 0.6 * 0.9) / 30 + totalInt / 200) * skillCoef * meditation * elementMult);
         return Math.floor(raw);
       }
 
@@ -472,8 +536,8 @@
         return Math.max(0, requiredTotalAttack - currentTotalAttack);
       }
 
-      function getMwBaseInt(level, mwPct) {
-        return Math.floor(baseIntByLevel(level) * (1 + mwPct));
+      function getMwBaseInt(level, mwPct, baseStartInt) {
+        return Math.floor(baseIntByLevel(level, baseStartInt) * (1 + mwPct));
       }
 
       function estimateLevelsNeededByTotalAttackGap(totalAttackGap, mwPct) {
@@ -485,58 +549,64 @@
 
       function getGearTotals() {
         let gearInt = 0;
-        let wandMatt = 0;
+        let gearPower = 0;
+        let formulaMatt = 0;
         for (const slot of GEAR) {
-          gearInt += Number($(`gear_int_${slot.key}`).value || 0);
-          if (slot.key === "wand") wandMatt = Number($(`gear_matt_${slot.key}`).value || 0);
+          const v = Number($(`gear_val_${slot.key}`).value || 0);
+          if (slot.combined) {
+            gearPower += v;
+            formulaMatt += v; // 仅用于当前伤害公式展示
+          } else {
+            gearInt += v;
+            gearPower += v;
+          }
         }
-        return { gearInt, wandMatt };
+        return { gearInt, gearPower, formulaMatt };
       }
 
       function run() {
         const level = Number($("level").value || 1);
         const skill = $("skill").value;
-        const skillLv = Math.min(30, Math.max(1, Number($("skillLevel").value || 1)));
-        const wandType = $("wandBoostSel").value;
+        const skillLv = Number($("skillLevel").value || 30);
         const map = getSelectedMapKey();
         const mwPct = MW_MAINSTAT_BONUS[$("mwMode").value] ?? 0;
+        const baseStartInt = Number($("baseStartInt").value || 10);
         const extraMatt = Number($("extraMatt").value || 0);
-        const { gearInt, wandMatt } = getGearTotals();
-        const totalMatt = wandMatt + extraMatt;
-        // 关键修正：MW只加成基础AP智力
-        const totalInt = Math.floor(baseIntByLevel(level) * (1 + mwPct)) + gearInt;
-        const mwBaseInt = getMwBaseInt(level, mwPct);
+        const { gearInt, gearPower, formulaMatt } = getGearTotals();
+        const selfAttr = getMwBaseInt(level, mwPct, baseStartInt); // 自身属性（可吃MW）
+        const equipAttr = gearPower + extraMatt; // 装备属性（INT+魔攻）
+        const totalAttack = selfAttr + equipAttr; // 总魔攻
+        // 当前伤害公式显示用：INT槽位并入智力，INT+魔攻槽位并入魔攻
+        const totalIntForDamage = selfAttr + gearInt;
+        const totalMattForDamage = formulaMatt + extraMatt;
 
         const skillCoef = SKILL_COEF[skillLv][skill];
-        const wandBoost = WAND_BOOST[wandType][skill];
         const meditation = skill === "天怒" ? 1 : 1.4;
         const communityRequiredTotalAttack = getCommunityRequiredTotalAttack(map, skill, skillLv);
 
-        const currentDamage = calcDamage(totalMatt, totalInt, skillCoef, wandBoost, meditation, map, skill);
-        const formulaFactor = calcFormulaFactor(totalMatt, totalInt);
+        const currentDamage = calcDamage(totalMattForDamage, totalIntForDamage, skillCoef, meditation, map, skill);
+        const formulaFactor = calcFormulaFactor(totalMattForDamage, totalIntForDamage);
         const requiredMatt = communityRequiredTotalAttack == null
           ? null
-          : Math.max(0, Math.ceil(communityRequiredTotalAttack - totalInt));
-        const eqMatt = totalMatt + totalInt; // 你确认的口径：1智力 = 1魔攻
+          : Math.max(0, Math.ceil(communityRequiredTotalAttack - selfAttr));
+        const eqMatt = totalAttack;
         const requiredMagicPower = communityRequiredTotalAttack;
         const neededIntOnly = findNeededIntOnlyByTotalAttack(eqMatt, requiredMagicPower);
         const neededMattOnly = findNeededMattOnlyByTotalAttack(eqMatt, requiredMagicPower);
 
-        $("outTotalInt").textContent = Math.round(totalInt).toLocaleString();
-        $("outTotalMatt").textContent = Math.round(totalMatt).toLocaleString();
+        $("outTotalInt").textContent = Math.round(selfAttr).toLocaleString();
+        $("outTotalMatt").textContent = Math.round(equipAttr).toLocaleString();
         $("outEqMatt").textContent = Math.round(eqMatt).toLocaleString();
         $("outMagicPower").textContent = Math.round(eqMatt).toLocaleString();
         $("outRequiredMagicPower").textContent = requiredMagicPower == null ? "无解" : Math.round(requiredMagicPower).toLocaleString();
         $("outCurrentDamage").textContent = Math.round(currentDamage).toLocaleString();
-        $("outRequiredDamage").textContent = communityRequiredTotalAttack == null
-          ? "表中无该组合数据"
-          : Math.round(communityRequiredTotalAttack).toLocaleString();
         $("outRequiredMatt").textContent = requiredMatt == null ? "无解" : Math.round(requiredMatt).toLocaleString();
 
         if (requiredMagicPower == null) {
           $("outStatus").textContent = "该地图/技能/等级在社区表中无可用门槛";
           $("outProgress").textContent = "-";
           $("outProgressDetail").textContent = "-";
+          $("outProgressBar").style.width = "0%";
           $("outPlanSelfInt").textContent = "无可计算";
           $("outPlanGearPower").textContent = "无可计算";
         } else {
@@ -546,8 +616,8 @@
           const lackTotalMagicAttack = Math.max(0, Math.round(requiredTotalMagicAttack - currentTotalMagicAttack));
           const levelsNeeded = estimateLevelsNeededByTotalAttackGap(lackTotalMagicAttack, mwPct);
           const perLevelGain = Math.max(1, Math.floor(5 * (1 + mwPct)));
-          const currentGearPower = gearInt + totalMatt;
-          const requiredGearPower = Math.max(0, requiredTotalMagicAttack - mwBaseInt);
+          const currentGearPower = equipAttr;
+          const requiredGearPower = Math.max(0, requiredTotalMagicAttack - selfAttr);
           const gearPowerGap = Math.max(0, requiredGearPower - currentGearPower);
           $("outStatus").textContent = hitOk
             ? "已达标（1 Hit）"
@@ -556,7 +626,8 @@
             ? Math.min(999, (currentTotalMagicAttack / requiredTotalMagicAttack) * 100)
             : 0;
           $("outProgress").textContent = `${progress.toFixed(1)}%`;
-          $("outProgressDetail").textContent = `${Math.round(currentTotalMagicAttack).toLocaleString()} / ${Math.round(requiredTotalMagicAttack).toLocaleString()}`;
+          $("outProgressDetail").textContent = `当前 ${Math.round(currentTotalMagicAttack).toLocaleString()}，目标 ${Math.round(requiredTotalMagicAttack).toLocaleString()}，还差 ${Math.max(0, Math.round(requiredTotalMagicAttack - currentTotalMagicAttack)).toLocaleString()}`;
+          $("outProgressBar").style.width = `${Math.max(0, Math.min(100, progress))}%`;
           $("outPlanSelfInt").textContent = neededIntOnly == null
             ? "无可计算"
             : neededIntOnly === 0
