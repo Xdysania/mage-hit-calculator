@@ -37,26 +37,241 @@
         background: #fff;
       }
       button { border: none; background: var(--primary); color: #fff; cursor: pointer; }
+      button:disabled { opacity: 0.55; cursor: not-allowed; }
+      .calc-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+      }
+      .btn-calc {
+        padding: 12px 28px;
+        font-size: 16px;
+        font-weight: 800;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      }
+      .calc-hint { font-size: 13px; color: var(--muted); }
+      .result-section { border: 1px solid #c7d2fe; background: linear-gradient(180deg, #fafbff 0%, #fff 48%); }
+      .result-head { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+      .result-title { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+      .result-sub { margin: 6px 0 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
+      .result-group { margin-top: 14px; }
+      .result-group:first-of-type { margin-top: 0; }
+      .result-group-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #6366f1;
+        margin-bottom: 8px;
+      }
+      .metric-strong { background: #f8fafc; border-color: #cbd5e1; }
+      .metric-status-ok { border-color: #86efac; background: #f0fdf4; }
+      .metric-status-no { border-color: #fecaca; background: #fef2f2; }
+      .metric .v-sm { font-size: 15px; font-weight: 700; line-height: 1.45; }
+      .plan-body { font-weight: 600; color: #334155; margin-top: 6px; }
+      .plan-metric-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .plan-metric-head .k { flex: 1; min-width: 0; margin: 0; }
+      .plan-hint-wrap {
+        flex-shrink: 0;
+        position: relative;
+      }
+      .plan-hint-wrap[hidden] { display: none !important; }
+      .plan-hint-btn {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1;
+        padding: 0;
+        cursor: help;
+      }
+      .plan-hint-btn:hover,
+      .plan-hint-btn:focus-visible {
+        border-color: #94a3b8;
+        color: #334155;
+        background: #fff;
+      }
+      .plan-hint-tip {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 8px);
+        width: max-content;
+        max-width: 200px;
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: #fff;
+        background: rgba(15, 23, 42, 0.92);
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+        opacity: 0;
+        visibility: hidden;
+        z-index: 30;
+        pointer-events: none;
+      }
+      .plan-hint-wrap:hover .plan-hint-tip,
+      .plan-hint-wrap:focus-within .plan-hint-tip {
+        opacity: 1;
+        visibility: visible;
+      }
       .slot { border: 1px dashed rgba(37,99,235,.35); border-radius: 10px; padding: 10px; background: rgba(37,99,235,.04); }
       .slot-title { font-weight: 800; margin-bottom: 8px; font-size: 13px; }
       .metric { border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
       .metric .k { font-size: 12px; color: var(--muted); }
       .metric .v { font-size: 21px; font-weight: 800; margin-top: 3px; }
+      /* 达标进度：合并块 + 分档着色（绿达成 / 橙一般差距 / 红差距大） */
+      .progress-metric { padding: 12px 14px; transition: border-color .25s ease, box-shadow .25s ease, background .25s ease; }
+      .progress-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .progress-head .k { margin: 0; flex: 1; min-width: 12em; }
+      .progress-pct {
+        font-size: clamp(26px, 5vw, 32px);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .progress-detail {
+        margin-top: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #334155;
+        line-height: 1.55;
+      }
+      .progress-caption {
+        margin-top: 6px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .progress-caption:empty { display: none; margin: 0; }
       .progress-track {
         width: 100%;
-        height: 10px;
+        height: 16px;
         border-radius: 999px;
-        background: #e2e8f0;
         overflow: hidden;
-        margin-top: 8px;
+        margin-top: 14px;
+        box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.08);
+        border: 1px solid rgba(15, 23, 42, 0.06);
       }
       .progress-fill {
         height: 100%;
         width: 0%;
-        background: linear-gradient(90deg, #22c55e, #3b82f6);
-        transition: width .2s ease;
+        border-radius: 999px;
+        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, filter 0.25s ease;
+      }
+      #outProgressWrap.progress-tier--neutral {
+        border-color: #e2e8f0;
+        background: #fafafa;
+      }
+      #outProgressWrap.progress-tier--neutral .progress-pct { color: var(--muted); }
+      #outProgressWrap.progress-tier--neutral .progress-caption { color: var(--muted); }
+      #outProgressWrap.progress-tier--neutral .progress-track { background: #eceff3; }
+      #outProgressWrap.progress-tier--neutral .progress-fill { background: linear-gradient(90deg, #94a3b8, #cbd5e1); }
+
+      #outProgressWrap.progress-tier--green {
+        border-color: #86efac;
+        background: linear-gradient(180deg, #f0fdf4 0%, #fff 72%);
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.12);
+      }
+      #outProgressWrap.progress-tier--green .progress-pct { color: #15803d; }
+      #outProgressWrap.progress-tier--green .progress-caption { color: #166534; }
+      #outProgressWrap.progress-tier--green .progress-track { background: #bbf7d0; border-color: rgba(22, 163, 74, 0.2); }
+      #outProgressWrap.progress-tier--green .progress-fill {
+        background: linear-gradient(90deg, #16a34a, #22c55e);
+        box-shadow: 0 0 12px rgba(34, 197, 94, 0.45);
+      }
+
+      #outProgressWrap.progress-tier--orange {
+        border-color: #fdba74;
+        background: linear-gradient(180deg, #fffbeb 0%, #fff 72%);
+        box-shadow: 0 0 0 1px rgba(234, 88, 12, 0.1);
+      }
+      #outProgressWrap.progress-tier--orange .progress-pct { color: #c2410c; }
+      #outProgressWrap.progress-tier--orange .progress-caption { color: #9a3412; }
+      #outProgressWrap.progress-tier--orange .progress-track { background: #fde68a; border-color: rgba(234, 88, 12, 0.22); }
+      #outProgressWrap.progress-tier--orange .progress-fill {
+        background: linear-gradient(90deg, #ea580c, #fb923c);
+        box-shadow: 0 0 10px rgba(234, 88, 12, 0.35);
+      }
+
+      #outProgressWrap.progress-tier--red {
+        border-color: #fca5a5;
+        background: linear-gradient(180deg, #fef2f2 0%, #fff 72%);
+        box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.1);
+      }
+      #outProgressWrap.progress-tier--red .progress-pct { color: #b91c1c; }
+      #outProgressWrap.progress-tier--red .progress-caption { color: #991b1b; }
+      #outProgressWrap.progress-tier--red .progress-track { background: #fecaca; border-color: rgba(220, 38, 38, 0.2); }
+      #outProgressWrap.progress-tier--red .progress-fill {
+        background: linear-gradient(90deg, #dc2626, #ef4444);
+        box-shadow: 0 0 10px rgba(220, 38, 38, 0.38);
       }
       .note { color: var(--muted); font-size: 12px; line-height: 1.6; }
+      .support-section h2 { margin: 0 0 10px 0; font-size: 18px; }
+      .support-intro { margin: 0; font-size: 14px; color: #334155; line-height: 1.6; }
+      .support-roadmap { margin: 12px 0 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
+      .support-fold {
+        margin-top: 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #f8fafc;
+      }
+      .support-fold summary {
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        color: #2563eb;
+        list-style: none;
+      }
+      .support-fold summary::-webkit-details-marker { display: none; }
+      .support-fold[open] summary { margin-bottom: 8px; }
+      .support-fold-body { font-size: 13px; color: #334155; line-height: 1.55; }
+      .support-fold-body p { margin: 0 0 8px 0; }
+      .support-fold-body p:last-child { margin-bottom: 0; }
+      .support-tier-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+      .support-tier {
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        font-variant-numeric: tabular-nums;
+      }
+      .support-img-wrap {
+        max-width: 320px;
+        margin: 8px auto 0;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: #f1f5f9;
+      }
+      .support-img {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+      }
       @media (max-width: 980px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
     </style>
   </head>
@@ -93,6 +308,7 @@
               <option value="0" selected>无</option>
               <option value="10">MW10（主属性 +5%）</option>
               <option value="20">MW20（主属性 +10%）</option>
+              <option value="30">MW30（主属性 +15%）</option>
             </select>
           </div>
 
@@ -120,7 +336,7 @@
           </div>
 
           <div class="field">
-            <label for="extraMatt">额外魔攻（非法杖来源，加法）</label>
+            <label for="extraMatt">自身Buff或药水提供的魔攻（不可叠加）</label>
             <input id="extraMatt" type="number" min="0" step="1" value="0" />
           </div>
         </div>
@@ -132,47 +348,120 @@
       </section>
 
       <section class="card">
-        <div class="grid-3">
-          <div class="metric"><div class="k">自身属性（含 MW）</div><div class="v" id="outTotalInt">-</div></div>
-          <div class="metric"><div class="k">装备属性（INT+魔攻）</div><div class="v" id="outTotalMatt">-</div></div>
-          <div class="metric"><div class="k">总魔攻（自身+装备）</div><div class="v" id="outEqMatt">-</div></div>
+        <div class="calc-actions">
+          <button type="button" class="btn-calc" id="calcBtn">计算结果</button>
+          <span class="calc-hint">填写角色、技能、怪物与配装后点击，将显示汇总与达标分析。</span>
         </div>
-        <div class="grid-3" style="margin-top:10px;">
-          <div class="metric"><div class="k">总魔法攻击力（总智力+总魔攻）</div><div class="v" id="outMagicPower">-</div></div>
-          <div class="metric"><div class="k">1 Hit 所需总魔法攻击力</div><div class="v" id="outRequiredMagicPower">-</div></div>
-          <div class="metric"><div class="k">当前伤害</div><div class="v" id="outCurrentDamage">-</div></div>
+      </section>
+
+      <section class="card result-section" id="resultPanel" hidden>
+        <div class="result-head">
+          <h2 class="result-title">计算结果</h2>
+          <p class="result-sub">以下数值按「自身属性 / 装备属性 / 总魔法攻击力」汇总，并与当前地图、技能条件下的 1 Hit 参考需求对比；修改输入后需再次点击「计算结果」更新。</p>
         </div>
-        <div class="grid-2" style="margin-top:10px;">
-          <div class="metric"><div class="k">1 Hit 所需装备属性</div><div class="v" id="outRequiredMatt">-</div></div>
-          <div class="metric"><div class="k">状态</div><div class="v" id="outStatus">-</div></div>
+
+        <div class="result-group">
+          <div class="result-group-label">属性汇总</div>
+          <div class="grid-3">
+            <div class="metric metric-strong"><div class="k">自身属性（含 MW）</div><div class="v" id="outTotalInt">-</div></div>
+            <div class="metric metric-strong"><div class="k">装备属性（INT+魔攻）</div><div class="v" id="outTotalMatt">-</div></div>
+            <div class="metric metric-strong"><div class="k">总魔攻（自身+装备）</div><div class="v" id="outEqMatt">-</div></div>
+          </div>
         </div>
-        <div class="grid-2" style="margin-top:10px;">
-          <div class="metric"><div class="k">达标进度（总魔法攻击力）</div><div class="v" id="outProgress">-</div></div>
-          <div class="metric">
-            <div class="k">进度说明</div>
-            <div class="v" style="font-size:14px;font-weight:700;" id="outProgressDetail">-</div>
+
+        <div class="result-group">
+          <div class="result-group-label">达标判定</div>
+          <div class="metric metric-strong" style="margin-bottom:10px;">
+            <div class="k">当前条件下 · 1 Hit 所需总魔法攻击力（估算）</div>
+            <div class="v" id="outRequiredMagicPower">-</div>
+          </div>
+          <div class="metric" id="outStatusWrap">
+            <div class="k">状态结论</div>
+            <div class="v v-sm" id="outStatus">-</div>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <div class="result-group-label">达标进度</div>
+          <div class="metric progress-metric progress-tier--neutral" id="outProgressWrap">
+            <div class="progress-head">
+              <div class="k">总魔法攻击力 · 达标进度（相对上述估算需求）</div>
+              <div class="progress-pct" id="outProgress">-</div>
+            </div>
+            <div class="progress-detail" id="outProgressDetail">-</div>
+            <div class="progress-caption" id="outProgressCaption"></div>
             <div class="progress-track"><div class="progress-fill" id="outProgressBar"></div></div>
           </div>
         </div>
-        <div class="grid-2" style="margin-top:10px;">
-          <div class="metric">
-            <div class="k">自身智力补充方案（升级，每级+5，计入MW）</div>
-            <div class="v" style="font-size:14px;font-weight:700;" id="outPlanSelfInt">-</div>
-          </div>
-          <div class="metric">
-            <div class="k">装备能力方案（仅看智力+魔攻总和）</div>
-            <div class="v" style="font-size:14px;font-weight:700;" id="outPlanGearPower">-</div>
+
+        <div class="result-group">
+          <div class="result-group-label">提升方案</div>
+          <div class="grid-2">
+            <div class="metric">
+              <div class="plan-metric-head">
+                <div class="k">智力路径 · 靠升级补总魔攻</div>
+                <span class="plan-hint-wrap" id="planSelfMwHintWrap" hidden>
+                  <button type="button" class="plan-hint-btn" aria-describedby="planSelfMwHintTip" title="已计入 MW 加成">i</button>
+                  <span class="plan-hint-tip" id="planSelfMwHintTip" role="tooltip">已计入 MW 加成</span>
+                </span>
+              </div>
+              <div class="v-sm plan-body" id="outPlanSelfInt">-</div>
+            </div>
+            <div class="metric">
+              <div class="plan-metric-head">
+                <div class="k">装备路径 · 拉高装备侧 INT+魔攻总和</div>
+                <span class="plan-hint-wrap" id="planGearMwHintWrap" hidden>
+                  <button type="button" class="plan-hint-btn" aria-describedby="planGearMwHintTip" title="已计入 MW 加成">i</button>
+                  <span class="plan-hint-tip" id="planGearMwHintTip" role="tooltip">已计入 MW 加成</span>
+                </span>
+              </div>
+              <div class="v-sm plan-body" id="outPlanGearPower">-</div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="card">
-        <h2 style="margin:0 0 8px 0; font-size:18px;">支持作者维护</h2>
-        <div class="note" style="font-size:14px; color:#334155;">
-          如果这个计算器对你有帮助，欢迎支持作者持续维护和更新。<br />
-          你的支持可以帮助我继续优化功能、修正数据，并长期免费提供给群友使用。<br />
-          具体支持方式后续会在这里补充，感谢每一位使用和支持的朋友。
-        </div>
+      <section class="card support-section" aria-labelledby="support-heading">
+        <h2 id="support-heading">支持作者维护</h2>
+        <p class="support-intro">
+          如果你觉得有用、想支持一下维护，可在游戏内乐捐——助力一个萌新法师的 <strong>1 hit Petri</strong> 小目标。若<strong>店铺未开门</strong>，可改用<strong>邮寄</strong>方式支持（见「邮寄物品乐捐」）。谢谢各位朋友。
+        </p>
+        <p class="support-roadmap">
+          后续维护计划补充：<strong>预估升级所需 leech 成本</strong>、<strong>提升装备所需成本</strong>等参考能力，方便一并做规划。欢迎大家继续支持作者，推动这些更新落地。
+        </p>
+
+        <details class="support-fold">
+          <summary>查看雇佣商店地址</summary>
+          <div class="support-fold-body">
+            <p>
+              <strong>自由市场 6-9</strong>，招牌子有 <strong>「1 hit calculate」</strong> 的雇佣商店。店内为<strong>固定价位</strong>的支持项，对应档位如下（进店选购即可）：
+            </p>
+            <div class="support-tier-row">
+              <span class="support-tier">999</span>
+              <span class="support-tier">9,999</span>
+              <span class="support-tier">99,999</span>
+              <span class="support-tier">999,999</span>
+              <span class="support-tier">9,999,999</span>
+            </div>
+            <div class="support-img-wrap">
+              <img
+                class="support-img"
+                src="support-shop-6-9.png"
+                alt="自由市场摊位参考图，招牌含 1 hit calculate"
+                width="320"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </details>
+
+        <details class="support-fold">
+          <summary>邮寄物品乐捐</summary>
+          <div class="support-fold-body">
+            <p>若雇佣商店<strong>暂时未开门</strong>，可将支持物品<strong>邮寄</strong>至角色 <strong>IGN：xdeeping</strong>。感谢支持。</p>
+          </div>
+        </details>
       </section>
 
     </div>
@@ -228,7 +517,7 @@
         "Skele": { hp: 85000, weak: [], resist: [] }
       };
 
-      // 社区权威表：目标是“1 Hit 所需总魔攻（1智=1魔攻口径）”
+      // 参考数据：1 Hit 所需总魔攻（1 智力≈1 总魔攻口径）
       // 每个技能仅提供 Lv1/10/20/30，其他等级做线性插值。
       // 说明：若某格为红块/空缺，使用 null 表示该条件无有效门槛值。
       const COMMUNITY_REQ_TOTAL_ATTACK = {
@@ -264,14 +553,15 @@
         "Road of Regrets 5": { "暴風雪": { 1: null, 10: null, 20: null, 30: null }, "火流星": { 1: 1571, 10: 1363, 20: 1200, 30: 1135 }, "天怒": { 1: null, 10: null, 20: 1876, 30: null } }
       };
 
-      // UI地图名 -> 社区表名
+      // UI 地图名 -> 参考数据内部键名
       const COMMUNITY_MAP_ALIAS = {
         "Harps": "Harp",
         "Petri": "Petri 1hit",
         "Skele": "Skelosaurus 1hit"
       };
 
-      const MW_MAINSTAT_BONUS = { "0": 0, "10": 0.05, "20": 0.10 };
+      // MW 主属性%：与下拉说明一致。MW30 按现行常见「满级魔法武器」类被动取 +15%（非 20%）；若区服不同可改此处。
+      const MW_MAINSTAT_BONUS = { "0": 0, "10": 0.05, "20": 0.10, "30": 0.15 };
 
       const GEAR = [
         { key: "hat", label: "头部 INT", intRec: [0, 25, 40], combined: false },
@@ -478,22 +768,6 @@
         return base;
       }
 
-      function calcDamage(matt, totalInt, skillCoef, meditation, mapName, skillName) {
-        let elementMult = 1.0;
-        const m = MAP_MONSTERS[mapName];
-        if (m) {
-          if (m.weak.includes(skillName)) elementMult = 1.5;
-          else if (m.resist.includes(skillName)) elementMult = 0.5;
-        }
-        const raw = (((matt * matt / 1000 + matt * 0.6 * 0.9) / 30 + totalInt / 200) * skillCoef * meditation * elementMult);
-        return Math.floor(raw);
-      }
-
-      function calcFormulaFactor(matt, totalInt) {
-        // 伤害公式中用于乘技能系数之前的中间因子（用于核对）
-        return ((matt * matt / 1000 + matt * 0.6 * 0.9) / 30 + totalInt / 200);
-      }
-
       function linearInterpolate(x, x1, y1, x2, y2) {
         if (x2 === x1) return y1;
         return y1 + ((x - x1) * (y2 - y1)) / (x2 - x1);
@@ -540,31 +814,48 @@
         return Math.floor(baseIntByLevel(level, baseStartInt) * (1 + mwPct));
       }
 
+      function perLevelSelfTotalAttackGain(mwPct) {
+        // 全智：每级基础智力 +5；自身智力含 MW 为 floor(基础智×(1+MW%))，故每升一级对自身总魔攻的增量为 floor(5×(1+MW%))（本页 1 自身智力≈1 总魔攻口径）
+        return Math.max(1, Math.floor(5 * (1 + mwPct)));
+      }
+
       function estimateLevelsNeededByTotalAttackGap(totalAttackGap, mwPct) {
         if (totalAttackGap <= 0) return 0;
-        // 每升1级，基础智力+5；总魔攻按 1智=1总魔攻，且MW会放大基础智力
-        const perLevelGain = Math.max(1, Math.floor(5 * (1 + mwPct)));
+        const perLevelGain = perLevelSelfTotalAttackGain(mwPct);
         return Math.ceil(totalAttackGap / perLevelGain);
+      }
+
+      function buildPlanSelfIntText(levelsNeeded, perLevelGain, neededIntOnly, hitOk) {
+        if (neededIntOnly == null) return "无可计算";
+        if (neededIntOnly === 0 || hitOk) return "已达标，无需单靠升级补足。";
+        return `约需升 ${levelsNeeded} 级（按每级约 +${perLevelGain} 总魔攻估算）。`;
+      }
+
+      function setPlanMwHints(mwPct) {
+        const show = mwPct > 0;
+        $("planSelfMwHintWrap").hidden = !show;
+        $("planGearMwHintWrap").hidden = !show;
       }
 
       function getGearTotals() {
         let gearInt = 0;
         let gearPower = 0;
-        let formulaMatt = 0;
         for (const slot of GEAR) {
           const v = Number($(`gear_val_${slot.key}`).value || 0);
           if (slot.combined) {
             gearPower += v;
-            formulaMatt += v; // 仅用于当前伤害公式展示
           } else {
             gearInt += v;
             gearPower += v;
           }
         }
-        return { gearInt, gearPower, formulaMatt };
+        return { gearInt, gearPower };
       }
 
       function run() {
+        const statusWrap = $("outStatusWrap");
+        statusWrap.classList.remove("metric-status-ok", "metric-status-no");
+
         const level = Number($("level").value || 1);
         const skill = $("skill").value;
         const skillLv = Number($("skillLevel").value || 30);
@@ -572,23 +863,23 @@
         const mwPct = MW_MAINSTAT_BONUS[$("mwMode").value] ?? 0;
         const baseStartInt = Number($("baseStartInt").value || 10);
         const extraMatt = Number($("extraMatt").value || 0);
-        const { gearInt, gearPower, formulaMatt } = getGearTotals();
+        const { gearInt, gearPower } = getGearTotals();
         const selfAttr = getMwBaseInt(level, mwPct, baseStartInt); // 自身属性（可吃MW）
         const equipAttr = gearPower + extraMatt; // 装备属性（INT+魔攻）
         const totalAttack = selfAttr + equipAttr; // 总魔攻
-        // 当前伤害公式显示用：INT槽位并入智力，INT+魔攻槽位并入魔攻
-        const totalIntForDamage = selfAttr + gearInt;
-        const totalMattForDamage = formulaMatt + extraMatt;
 
-        const skillCoef = SKILL_COEF[skillLv][skill];
-        const meditation = skill === "天怒" ? 1 : 1.4;
+        const progressWrap = $("outProgressWrap");
+        function setProgressTier(tier) {
+          progressWrap.classList.remove(
+            "progress-tier--neutral",
+            "progress-tier--green",
+            "progress-tier--orange",
+            "progress-tier--red"
+          );
+          progressWrap.classList.add("progress-tier--" + tier);
+        }
+
         const communityRequiredTotalAttack = getCommunityRequiredTotalAttack(map, skill, skillLv);
-
-        const currentDamage = calcDamage(totalMattForDamage, totalIntForDamage, skillCoef, meditation, map, skill);
-        const formulaFactor = calcFormulaFactor(totalMattForDamage, totalIntForDamage);
-        const requiredMatt = communityRequiredTotalAttack == null
-          ? null
-          : Math.max(0, Math.ceil(communityRequiredTotalAttack - selfAttr));
         const eqMatt = totalAttack;
         const requiredMagicPower = communityRequiredTotalAttack;
         const neededIntOnly = findNeededIntOnlyByTotalAttack(eqMatt, requiredMagicPower);
@@ -597,47 +888,63 @@
         $("outTotalInt").textContent = Math.round(selfAttr).toLocaleString();
         $("outTotalMatt").textContent = Math.round(equipAttr).toLocaleString();
         $("outEqMatt").textContent = Math.round(eqMatt).toLocaleString();
-        $("outMagicPower").textContent = Math.round(eqMatt).toLocaleString();
         $("outRequiredMagicPower").textContent = requiredMagicPower == null ? "无解" : Math.round(requiredMagicPower).toLocaleString();
-        $("outCurrentDamage").textContent = Math.round(currentDamage).toLocaleString();
-        $("outRequiredMatt").textContent = requiredMatt == null ? "无解" : Math.round(requiredMatt).toLocaleString();
 
         if (requiredMagicPower == null) {
-          $("outStatus").textContent = "该地图/技能/等级在社区表中无可用门槛";
+          $("outStatus").textContent = "该地图、技能与等级组合下暂无参考门槛数据";
+          statusWrap.classList.remove("metric-status-ok", "metric-status-no");
+          setProgressTier("neutral");
           $("outProgress").textContent = "-";
           $("outProgressDetail").textContent = "-";
+          $("outProgressCaption").textContent = "";
           $("outProgressBar").style.width = "0%";
           $("outPlanSelfInt").textContent = "无可计算";
           $("outPlanGearPower").textContent = "无可计算";
+          setPlanMwHints(0);
         } else {
           const hitOk = eqMatt >= requiredMagicPower;
           const currentTotalMagicAttack = eqMatt;
           const requiredTotalMagicAttack = requiredMagicPower;
           const lackTotalMagicAttack = Math.max(0, Math.round(requiredTotalMagicAttack - currentTotalMagicAttack));
           const levelsNeeded = estimateLevelsNeededByTotalAttackGap(lackTotalMagicAttack, mwPct);
-          const perLevelGain = Math.max(1, Math.floor(5 * (1 + mwPct)));
+          const perLevelGain = perLevelSelfTotalAttackGain(mwPct);
           const currentGearPower = equipAttr;
           const requiredGearPower = Math.max(0, requiredTotalMagicAttack - selfAttr);
           const gearPowerGap = Math.max(0, requiredGearPower - currentGearPower);
           $("outStatus").textContent = hitOk
             ? "已达标（1 Hit）"
             : `未达标（还差 ${lackTotalMagicAttack.toLocaleString()} 总魔法攻击力）`;
+          statusWrap.classList.add(hitOk ? "metric-status-ok" : "metric-status-no");
           const progress = requiredTotalMagicAttack > 0
             ? Math.min(999, (currentTotalMagicAttack / requiredTotalMagicAttack) * 100)
             : 0;
           $("outProgress").textContent = `${progress.toFixed(1)}%`;
           $("outProgressDetail").textContent = `当前 ${Math.round(currentTotalMagicAttack).toLocaleString()}，目标 ${Math.round(requiredTotalMagicAttack).toLocaleString()}，还差 ${Math.max(0, Math.round(requiredTotalMagicAttack - currentTotalMagicAttack)).toLocaleString()}`;
           $("outProgressBar").style.width = `${Math.max(0, Math.min(100, progress))}%`;
-          $("outPlanSelfInt").textContent = neededIntOnly == null
-            ? "无可计算"
-            : neededIntOnly === 0
-              ? "已达标（无需靠升级补智力）"
-              : `约需升 ${levelsNeeded} 级（每级约+${perLevelGain} 总魔攻，含MW后）`;
+          let tierCaption;
+          if (hitOk || progress >= 100) {
+            setProgressTier("green");
+            tierCaption = "已达 1 Hit 门槛（进度条满格视为达标）";
+          } else if (progress >= 50) {
+            setProgressTier("orange");
+            tierCaption = "剩余差距一般，继续拉高总魔攻即可推进";
+          } else {
+            setProgressTier("red");
+            tierCaption = "相对门槛差距较大，需重点提升智力 / 装备或等级";
+          }
+          $("outProgressCaption").textContent = tierCaption;
+          setPlanMwHints(mwPct);
+          $("outPlanSelfInt").textContent = buildPlanSelfIntText(
+            levelsNeeded,
+            perLevelGain,
+            neededIntOnly,
+            hitOk
+          );
           $("outPlanGearPower").textContent = neededMattOnly == null
             ? "无可计算"
             : gearPowerGap === 0
-              ? `已达标（当前装备能力 ${Math.round(currentGearPower).toLocaleString()}）`
-              : `装备能力需到 ${Math.round(requiredGearPower).toLocaleString()}（当前 ${Math.round(currentGearPower).toLocaleString()}，还差 ${Math.round(gearPowerGap).toLocaleString()}）`;
+              ? `已达标（当前装备侧 ${Math.round(currentGearPower).toLocaleString()}）。`
+              : `还差 ${Math.round(gearPowerGap).toLocaleString()} 总魔攻；建议装备侧到 ${Math.round(requiredGearPower).toLocaleString()}（当前 ${Math.round(currentGearPower).toLocaleString()}）。`;
         }
 
       }
@@ -646,14 +953,12 @@
       renderGear();
       $("monsterSel").addEventListener("change", () => {
         fillHitModes();
+      });
+      $("calcBtn").addEventListener("click", () => {
         run();
+        $("resultPanel").hidden = false;
+        $("resultPanel").scrollIntoView({ behavior: "smooth", block: "start" });
       });
-      // 输入即算，减少反复点按钮
-      document.querySelectorAll("input, select").forEach((el) => {
-        el.addEventListener("input", run);
-        el.addEventListener("change", run);
-      });
-      run();
     </script>
   </body>
 </html>
