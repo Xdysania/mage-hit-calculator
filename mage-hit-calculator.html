@@ -128,6 +128,32 @@
       }
       .slot { border: 1px dashed rgba(37,99,235,.35); border-radius: 10px; padding: 10px; background: rgba(37,99,235,.04); }
       .slot-title { font-weight: 800; margin-bottom: 8px; font-size: 13px; }
+      .slot-price-label {
+        display: block;
+        margin-top: 8px;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .gear-cost-extra {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+      .gear-price-summary {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .gear-price-summary-label { font-size: 13px; color: var(--muted); font-weight: 600; max-width: 70%; line-height: 1.45; }
+      .gear-price-summary-nums { display: inline-flex; align-items: baseline; gap: 4px; flex-shrink: 0; }
+      .gear-price-summary-value { font-size: 22px; font-weight: 800; color: #0f172a; font-variant-numeric: tabular-nums; }
+      .gear-price-unit { font-size: 16px; font-weight: 800; color: #64748b; }
       .metric { border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
       .metric .k { font-size: 12px; color: var(--muted); }
       .metric .v { font-size: 21px; font-weight: 800; margin-top: 3px; }
@@ -345,6 +371,23 @@
       <section class="card">
         <div style="font-weight:800;margin-bottom:8px;">配装输入</div>
         <div class="grid-4" id="gearGrid"></div>
+        <div class="gear-cost-extra grid-2">
+          <div class="field">
+            <label for="costLevelGold">提升等级所需金币（M）</label>
+            <input id="costLevelGold" type="number" min="0" step="0.01" value="0" inputmode="decimal" />
+          </div>
+          <div class="field">
+            <label for="costMw20Gold">MW20 所需金币（M）</label>
+            <input id="costMw20Gold" type="number" min="0" step="0.01" value="0" inputmode="decimal" />
+          </div>
+        </div>
+        <div class="gear-price-summary" aria-live="polite">
+          <span class="gear-price-summary-label">总价（各输入均为 M，已直接相加）</span>
+          <span class="gear-price-summary-nums">
+            <span class="gear-price-summary-value" id="outGearPriceTotal">0</span>
+            <span class="gear-price-unit">M</span>
+          </span>
+        </div>
       </section>
 
       <section class="card">
@@ -752,12 +795,54 @@
           valInput.style.marginTop = "8px";
           box.appendChild(valInput);
 
+          const priceLabel = document.createElement("label");
+          priceLabel.className = "slot-price-label";
+          priceLabel.htmlFor = `gear_price_${slot.key}`;
+          priceLabel.textContent = "参考价格（M）";
+          box.appendChild(priceLabel);
+
+          const priceInput = document.createElement("input");
+          priceInput.type = "number";
+          priceInput.min = "0";
+          priceInput.step = "0.01";
+          priceInput.id = `gear_price_${slot.key}`;
+          priceInput.value = "0";
+          priceInput.setAttribute("inputmode", "decimal");
+          priceInput.addEventListener("input", updateGearPriceTotal);
+          priceInput.addEventListener("change", updateGearPriceTotal);
+          box.appendChild(priceInput);
+
           sel.addEventListener("change", () => {
             if (sel.value === "__custom__") return;
             $(`gear_val_${slot.key}`).value = Number(sel.value);
           });
           root.appendChild(box);
         }
+        updateGearPriceTotal();
+      }
+
+      function parseMInput(el) {
+        if (!el) return 0;
+        const n = Number(el.value);
+        return Math.max(0, Number.isFinite(n) ? n : 0);
+      }
+
+      function updateGearPriceTotal() {
+        let totalM = 0;
+        for (const slot of GEAR) {
+          totalM += parseMInput($(`gear_price_${slot.key}`));
+        }
+        totalM += parseMInput($("costLevelGold"));
+        totalM += parseMInput($("costMw20Gold"));
+
+        const out = $("outGearPriceTotal");
+        if (!out) return;
+        if (totalM === 0) {
+          out.textContent = "0";
+          return;
+        }
+        const digits = totalM < 1 ? 6 : totalM < 100 ? 4 : 3;
+        out.textContent = String(parseFloat(totalM.toFixed(digits)));
       }
 
       function baseIntByLevel(level, baseStartInt) {
@@ -951,6 +1036,13 @@
 
       fillBasics();
       renderGear();
+      ["costLevelGold", "costMw20Gold"].forEach((id) => {
+        const el = $(id);
+        if (el) {
+          el.addEventListener("input", updateGearPriceTotal);
+          el.addEventListener("change", updateGearPriceTotal);
+        }
+      });
       $("monsterSel").addEventListener("change", () => {
         fillHitModes();
       });
