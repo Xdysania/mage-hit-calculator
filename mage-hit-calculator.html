@@ -250,54 +250,8 @@
         box-shadow: 0 0 10px rgba(220, 38, 38, 0.38);
       }
       .note { color: var(--muted); font-size: 12px; line-height: 1.6; }
-      .support-section h2 { margin: 0 0 10px 0; font-size: 18px; }
-      .support-intro { margin: 0; font-size: 14px; color: #334155; line-height: 1.6; }
-      .support-roadmap { margin: 12px 0 0; font-size: 13px; color: var(--muted); line-height: 1.6; }
-      .support-fold {
-        margin-top: 10px;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 10px 12px;
-        background: #f8fafc;
-      }
-      .support-fold summary {
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 700;
-        color: #2563eb;
-        list-style: none;
-      }
-      .support-fold summary::-webkit-details-marker { display: none; }
-      .support-fold[open] summary { margin-bottom: 8px; }
-      .support-fold-body { font-size: 13px; color: #334155; line-height: 1.55; }
-      .support-fold-body p { margin: 0 0 8px 0; }
-      .support-fold-body p:last-child { margin-bottom: 0; }
-      .support-tier-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-      .support-tier {
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        font-size: 12px;
-        font-weight: 600;
-        color: #475569;
-        font-variant-numeric: tabular-nums;
-      }
-      .support-img-wrap {
-        max-width: 320px;
-        margin: 8px auto 0;
-        border-radius: 8px;
-        overflow: hidden;
-        border: 1px solid var(--border);
-        background: #f1f5f9;
-      }
-      .support-img {
-        width: 100%;
-        max-width: 320px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-      }
+      .author-note { color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; }
+      .author-note strong { color: #0f172a; }
       @media (max-width: 980px) { .grid-2,.grid-3,.grid-4 { grid-template-columns: 1fr; } }
     </style>
   </head>
@@ -464,47 +418,8 @@
         </div>
       </section>
 
-      <section class="card support-section" aria-labelledby="support-heading">
-        <h2 id="support-heading">支持作者维护</h2>
-        <p class="support-intro">
-          如果你觉得有用、想支持一下维护，可在游戏内乐捐——助力一个萌新法师的 <strong>1 hit Petri</strong> 小目标。若<strong>店铺未开门</strong>，可改用<strong>邮寄</strong>方式支持（见「邮寄物品乐捐」）。谢谢各位朋友。
-        </p>
-        <p class="support-roadmap">
-          后续维护计划补充：<strong>预估升级所需 leech 成本</strong>、<strong>提升装备所需成本</strong>等参考能力，方便一并做规划。欢迎大家继续支持作者，推动这些更新落地。
-        </p>
-
-        <details class="support-fold">
-          <summary>查看雇佣商店地址</summary>
-          <div class="support-fold-body">
-            <p>
-              <strong>自由市场 6-9</strong>，招牌子有 <strong>「1 hit calculate」</strong> 的雇佣商店。店内为<strong>固定价位</strong>的支持项，对应档位如下（进店选购即可）：
-            </p>
-            <div class="support-tier-row">
-              <span class="support-tier">999</span>
-              <span class="support-tier">9,999</span>
-              <span class="support-tier">99,999</span>
-              <span class="support-tier">999,999</span>
-              <span class="support-tier">9,999,999</span>
-            </div>
-            <div class="support-img-wrap">
-              <img
-                class="support-img"
-                src="support-shop-6-9.png"
-                alt="自由市场摊位参考图，招牌含 1 hit calculate"
-                width="320"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </div>
-        </details>
-
-        <details class="support-fold">
-          <summary>邮寄物品乐捐</summary>
-          <div class="support-fold-body">
-            <p>若雇佣商店<strong>暂时未开门</strong>，可将支持物品<strong>邮寄</strong>至角色 <strong>IGN：xdeeping</strong>。感谢支持。</p>
-          </div>
-        </details>
+      <section class="card author-note" aria-label="计算器作者">
+        计算器作者：<strong>xdeeping</strong>
       </section>
 
     </div>
