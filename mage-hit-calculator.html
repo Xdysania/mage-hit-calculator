@@ -268,7 +268,7 @@
             <input id="level" type="number" min="1" max="300" value="30" />
           </div>
           <div class="field">
-            <label for="baseStartInt">基础智力（默认10，可选4-13）</label>
+            <label for="baseStartInt">基础智力（默认13，可选4-13）</label>
             <select id="baseStartInt">
               <option value="4">4</option>
               <option value="5">5</option>
@@ -276,10 +276,10 @@
               <option value="7">7</option>
               <option value="8">8</option>
               <option value="9">9</option>
-              <option value="10" selected>10</option>
+              <option value="10">10</option>
               <option value="11">11</option>
               <option value="12">12</option>
-              <option value="13">13</option>
+              <option value="13" selected>13</option>
             </select>
           </div>
           <div class="field">
@@ -288,7 +288,7 @@
               <option value="0" selected>无</option>
               <option value="10">MW10（主属性 +5%）</option>
               <option value="20">MW20（主属性 +10%）</option>
-              <option value="30">MW30（主属性 +15%）</option>
+              <option value="30">MW30（主属性 +13%）</option>
             </select>
           </div>
 
@@ -518,8 +518,8 @@
         "Skele": "Skelosaurus 1hit"
       };
 
-      // MW 主属性%：与下拉说明一致。MW30 按现行常见「满级魔法武器」类被动取 +15%（非 20%）；若区服不同可改此处。
-      const MW_MAINSTAT_BONUS = { "0": 0, "10": 0.05, "20": 0.10, "30": 0.15 };
+      // MW 主属性%：与下拉说明一致。
+      const MW_MAINSTAT_BONUS = { "0": 0, "10": 0.05, "20": 0.10, "30": 0.13 };
 
       const GEAR = [
         { key: "hat", label: "头部 INT", intRec: [0, 25, 40], combined: false },
