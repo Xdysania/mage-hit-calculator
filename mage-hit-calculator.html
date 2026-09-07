@@ -52,6 +52,38 @@
         box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
       }
       .calc-hint { font-size: 13px; color: var(--muted); }
+      .calc-author {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: 4px;
+        opacity: 0.72;
+      }
+      .calc-author-label {
+        font-size: 11px;
+        color: #94a3b8;
+        line-height: 1;
+      }
+      .calc-author-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .calc-author-avatar {
+        width: 20px;
+        height: 20px;
+        border-radius: 999px;
+        object-fit: cover;
+        border: 1px solid #e2e8f0;
+        background: #f1f5f9;
+        flex-shrink: 0;
+      }
+      .calc-author-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: #64748b;
+        line-height: 1;
+      }
       .result-section { border: 1px solid #c7d2fe; background: linear-gradient(180deg, #fafbff 0%, #fff 48%); }
       .result-head { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
       .result-title { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
@@ -373,6 +405,21 @@
       <section class="card">
         <div class="calc-actions">
           <button type="button" class="btn-calc" id="calcBtn">计算结果</button>
+          <div class="calc-author" title="作者 xDeeping">
+            <span class="calc-author-label">作者：</span>
+            <div class="calc-author-chip">
+              <img
+                class="calc-author-avatar"
+                src="author-xdeeping.jpg"
+                alt=""
+                width="20"
+                height="20"
+                loading="lazy"
+                decoding="async"
+              />
+              <span class="calc-author-name">xDeeping</span>
+            </div>
+          </div>
           <span class="calc-hint">填写角色、技能、怪物与配装后点击，将显示汇总与达标分析。</span>
         </div>
       </section>
@@ -454,7 +501,7 @@
       </section>
 
       <section class="card author-note" aria-label="计算器作者">
-        计算器作者：<strong>xdeeping</strong>
+        计算器作者：<strong>xDeeping</strong>
       </section>
 
     </div>
