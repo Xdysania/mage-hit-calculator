@@ -157,6 +157,32 @@
       .metric { border: 1px solid var(--border); border-radius: 10px; padding: 10px; }
       .metric .k { font-size: 12px; color: var(--muted); }
       .metric .v { font-size: 21px; font-weight: 800; margin-top: 3px; }
+      .v-row {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 3px;
+      }
+      .v-row .v { margin-top: 0; }
+      .v-echo {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 4px;
+        font-variant-numeric: tabular-nums;
+      }
+      .v-echo-num {
+        font-size: 13px;
+        font-weight: 700;
+        color: #6366f1;
+        line-height: 1.2;
+      }
+      .v-echo-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: #94a3b8;
+        letter-spacing: 0.02em;
+      }
       /* 达标进度：合并块 + 分档着色（绿达成 / 橙一般差距 / 红差距大） */
       .progress-metric { padding: 12px 14px; transition: border-color .25s ease, box-shadow .25s ease, background .25s ease; }
       .progress-head {
@@ -362,7 +388,16 @@
           <div class="grid-3">
             <div class="metric metric-strong"><div class="k">自身属性（含 MW）</div><div class="v" id="outTotalInt">-</div></div>
             <div class="metric metric-strong"><div class="k">装备属性（INT+魔攻）</div><div class="v" id="outTotalMatt">-</div></div>
-            <div class="metric metric-strong"><div class="k">总魔攻（自身+装备）</div><div class="v" id="outEqMatt">-</div></div>
+            <div class="metric metric-strong">
+              <div class="k">总魔攻（自身+装备）</div>
+              <div class="v-row">
+                <div class="v" id="outEqMatt">-</div>
+                <div class="v-echo" title="默认法强再吃 Echo（最终 TMA +4%）">
+                  <span class="v-echo-num" id="outEqMattEcho">-</span>
+                  <span class="v-echo-label">Echo</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -901,9 +936,14 @@
         const neededIntOnly = findNeededIntOnlyByTotalAttack(eqMatt, requiredMagicPower);
         const neededMattOnly = findNeededMattOnlyByTotalAttack(eqMatt, requiredMagicPower);
 
+        /** Echo：最终 TMA +4% */
+        const ECHO_TMA_BONUS = 1.04;
+        const eqMattEcho = eqMatt * ECHO_TMA_BONUS;
+
         $("outTotalInt").textContent = Math.round(selfAttr).toLocaleString();
         $("outTotalMatt").textContent = Math.round(equipAttr).toLocaleString();
         $("outEqMatt").textContent = Math.round(eqMatt).toLocaleString();
+        $("outEqMattEcho").textContent = Math.round(eqMattEcho).toLocaleString();
         $("outRequiredMagicPower").textContent = requiredMagicPower == null ? "无解" : Math.round(requiredMagicPower).toLocaleString();
 
         if (requiredMagicPower == null) {
